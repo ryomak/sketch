@@ -1,0 +1,22 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import ArtworkDetail from '../../components/ArtworkDetail.astro';
+import { artworks,getArtWasmName } from "../../data/artworks";
+
+
+export async function getStaticPaths() {
+ 
+  return artworks.map(artwork => ({
+    params: { id: getArtWasmName(artwork) },
+    props: { artwork },
+  }));
+}
+
+const { artwork } = Astro.props;
+---
+
+<Layout title={`${artwork.title} - アートギャラリー`}>
+  <main>
+    <ArtworkDetail artwork={artwork} />
+  </main>
+</Layout>

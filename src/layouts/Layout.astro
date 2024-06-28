@@ -1,0 +1,17 @@
+---
+const { title } = Astro.props;
+import { BaseUrl } from '../consts';
+
+---
+
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <script is:inline src={`${BaseUrl}/wasm_exec.js`}></script>
+    <title>{title}</title>
+  </head>
+  <body>
+    <slot />
+  </body>
+</html>
