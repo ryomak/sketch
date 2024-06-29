@@ -1,22 +1,16 @@
 export interface Artwork {
-    code: string;
+    language: string;
     name: string;
-    title: string;
-    description: string;
 }
   
 export const artworks: Artwork[] = [
     { 
-        code: "go", 
+        language: "go", 
         name: "art_example", 
-        title: "memo",
-        description: "memoです"
     },
     { 
-        code: "go", 
+        language: "go", 
         name: "ruby_image", 
-        title: "memo",
-        description: "memoです"
     },
 ];
 
@@ -25,5 +19,5 @@ export function getArtWasm(a: Artwork) {
 }
 
 export function getArtWasmName(a: Artwork) {
-    return `${a.code}_${a.name}`
+    return `${a.language}_${a.name}`
 }

@@ -1,7 +1,7 @@
 ---
 import type { Artwork } from '../data/artworks';
 import { BaseUrl } from '../consts';
-import { readGoFile } from '../utils/fileReader';
+import { readFile } from '../utils/fileReader';
 import { getArtWasmName } from '../data/artworks'
 
 interface Props {
@@ -11,8 +11,8 @@ interface Props {
 const { artwork } = Astro.props;
 
 
-const rawCode = await readGoFile(artwork.name);
-const wasmFilePath = `${BaseUrl}/wasm/${artwork.code}_${artwork.name}.wasm`
+const rawCode = await readFile(artwork.language, artwork.name);
+const wasmFilePath = `${BaseUrl}/wasm/${artwork.language}_${artwork.name}.wasm`
 
 ---
 
