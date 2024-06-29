@@ -12,6 +12,12 @@ export const artworks: Artwork[] = [
         title: "memo",
         description: "memoです"
     },
+    { 
+        code: "go", 
+        name: "ruby_image", 
+        title: "memo",
+        description: "memoです"
+    },
 ];
 
 export function getArtWasm(a: Artwork) {

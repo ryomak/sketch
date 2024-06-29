@@ -12,9 +12,9 @@ type Interface interface {
 	Generate(this js.Value, args []js.Value) any 
 }
 
-func Do(i Interface) {
+func Do(name string, i Interface) {
 	c := make(chan struct{}, 0)
-	js.Global().Set("go_art_example", js.ValueOf(map[string]any{
+	js.Global().Set(name, js.ValueOf(map[string]any{
 		"title":       js.ValueOf(i.Title()),
 		"description": js.ValueOf(i.Description()),
 		"generate":    js.FuncOf(i.Generate),

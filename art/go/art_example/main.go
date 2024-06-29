@@ -9,7 +9,7 @@ import (
 )
 
 func main() {
-	art.Do(Art{})
+	art.Do("go_art_example",Art{})
 }
 
 var _ art.Interface = Art{}
