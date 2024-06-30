@@ -12,6 +12,10 @@ export const artworks: Artwork[] = [
         language: "go", 
         name: "ruby_image", 
     },
+    { 
+        language: "go", 
+        name: "p5", 
+    },
 ];
 
 export function getArtWasm(a: Artwork) {

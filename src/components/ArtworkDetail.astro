@@ -40,8 +40,7 @@ const wasmFilePath = `${BaseUrl}/wasm/${artwork.language}_${artwork.name}.wasm`
 		if (typeof Go !== 'undefined') {
 			const go = new Go();
 			const result = await WebAssembly.instantiateStreaming(fetch(wasmFilePath), go.importObject);
-			const inst = result.instance;
-			await go.run(inst);
+			await go.run(result.instance);
 		} else {
 			console.error('Go is not defined. Make sure wasm_exec.js is loaded correctly.');
 		}
@@ -59,11 +58,11 @@ const wasmFilePath = `${BaseUrl}/wasm/${artwork.language}_${artwork.name}.wasm`
 	art = eval(artParamName);
 
 	
-    const generateButton = document.getElementById('generate-button');
+  const generateButton = document.getElementById('generate-button');
 	document.getElementById('title').innerText = art.title
 	document.getElementById('description').innerText = art.description
 
-    generateButton.addEventListener('click', ()=>{
+  generateButton.addEventListener('click', ()=>{
 		const canvasId = `canvas-detail`;
 		const canvasElement = document.getElementById(canvasId);
 

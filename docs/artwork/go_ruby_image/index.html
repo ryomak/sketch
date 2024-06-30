@@ -1,10 +1,12 @@
 <!DOCTYPE html><html lang="ja"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><script src="/sketch/wasm_exec.js"></script><title>$アートギャラリー</title><style>:root{--primary-color: #00ffff;--secondary-color: #ff00ff;--bg-color: #0a0a0a;--text-color: #ffffff}body{background-color:var(--bg-color);color:var(--text-color);font-family:Roboto,sans-serif}.artwork-detail[data-astro-cid-f2ihqk6a]{max-width:1200px;width:95%;margin:2rem auto;padding:2rem;background:#ffffff0d;border-radius:20px;box-shadow:0 0 20px #0ff3;backdrop-filter:blur(10px)}.artwork-container[data-astro-cid-f2ihqk6a]{display:flex;flex-direction:column;gap:2rem}.canvas-container[data-astro-cid-f2ihqk6a]{position:relative;width:100%;padding-bottom:100%;overflow:hidden;border-radius:15px;box-shadow:0 0 30px #00ffff4d}.artwork-canvas[data-astro-cid-f2ihqk6a]{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover}#generate-button[data-astro-cid-f2ihqk6a]{position:absolute;bottom:20px;left:50%;transform:translate(-50%);padding:.8rem 2rem;background-color:#0ff3;color:var(--primary-color);border:2px solid var(--primary-color);border-radius:30px;font-size:1rem;cursor:pointer;transition:all .3s ease}#generate-button[data-astro-cid-f2ihqk6a]:hover{background-color:var(--primary-color);color:var(--bg-color);box-shadow:0 0 20px var(--primary-color)}.go-code[data-astro-cid-f2ihqk6a]{background:#ffffff0d;border-radius:15px;padding:1.5rem;overflow-x:auto;border:1px solid var(--primary-color)}.go-code[data-astro-cid-f2ihqk6a] pre[data-astro-cid-f2ihqk6a]{margin:0}.go-code[data-astro-cid-f2ihqk6a] code[data-astro-cid-f2ihqk6a]{color:var(--primary-color);font-family:Courier New,monospace;font-size:.9rem}.artwork-info[data-astro-cid-f2ihqk6a]{text-align:center;padding:2rem;background:#ffffff0d;border-radius:15px;box-shadow:0 0 20px #f0f3}.artwork-info[data-astro-cid-f2ihqk6a] h1[data-astro-cid-f2ihqk6a]{font-size:2.5rem;margin-bottom:1rem;color:var(--primary-color);text-shadow:0 0 10px var(--primary-color)}.artwork-info[data-astro-cid-f2ihqk6a] p[data-astro-cid-f2ihqk6a]{font-size:1.1rem;color:var(--text-color);max-width:800px;margin:0 auto;line-height:1.6}@media (min-width: 768px){.artwork-container[data-astro-cid-f2ihqk6a]{flex-direction:row}.canvas-container[data-astro-cid-f2ihqk6a]{flex:1;padding-bottom:50%}.go-code[data-astro-cid-f2ihqk6a]{flex:1;max-height:400px}}@keyframes glow{0%{box-shadow:0 0 20px var(--primary-color)}50%{box-shadow:0 0 30px var(--secondary-color)}to{box-shadow:0 0 20px var(--primary-color)}}.artwork-detail[data-astro-cid-f2ihqk6a]{animation:glow 5s infinite alternate}
-</style></head> <body>  <main> <div class="artwork-detail" data-astro-cid-f2ihqk6a> <div class="artwork-container" data-astro-cid-f2ihqk6a> <div class="canvas-container" data-astro-cid-f2ihqk6a> <canvas class="artwork-canvas" id="canvas-detail" data-astro-cid-f2ihqk6a></canvas> <button id="generate-button" data-astro-cid-f2ihqk6a>生成</button> </div> <div data-astro-cid-f2ihqk6a> <h3 data-astro-cid-f2ihqk6a>Goコード</h3> <div class="go-code" data-astro-cid-f2ihqk6a> <pre data-astro-cid-f2ihqk6a><code data-astro-cid-f2ihqk6a>package main
+</style></head> <body>  <main> <div class="artwork-detail" data-astro-cid-f2ihqk6a> <div class="artwork-container" data-astro-cid-f2ihqk6a> <div class="canvas-container" data-astro-cid-f2ihqk6a> <button id="generate-button" data-astro-cid-f2ihqk6a>生成</button> </div> <div data-astro-cid-f2ihqk6a> <h3 data-astro-cid-f2ihqk6a>Goコード</h3> <div class="go-code" data-astro-cid-f2ihqk6a> <pre data-astro-cid-f2ihqk6a><code data-astro-cid-f2ihqk6a>package main
 
 import (
 	&quot;image/color&quot;
 	&quot;syscall/js&quot;
 	&quot;math&quot;
+	&quot;fmt&quot;
+	&quot;math/rand&quot;
 	&quot;github.com/ryomak/sketch/art&quot;
 	&quot;github.com/go-p5/p5&quot;
 )
@@ -17,7 +19,7 @@ var _ art.Interface = Art{}
 type Art struct{}
 
 func (Art) Title() any {
-	return &quot;幾何学&quot;
+	return &quot;Ruby&quot;
 }
 
 func (Art) Description() any {
@@ -30,53 +32,119 @@ func (Art) Generate(this js.Value, args []js.Value) any {
 }
 
 var (
-	angle float64
+	numBalls = 12
+	spring   = 0.05
+	gravity  = 0.03
+	friction = -0.9
+	balls    = make([]Ball, numBalls)
+
+	width  = 640
+	height = 360
 )
 
 func setup() {
-	p5.Canvas(400, 400)
+	fmt.Println(&quot;aaaaaaaaaa&quot;)
+	p5.Canvas(width, height)
+	fmt.Println(width,height)
+	for i := range balls {
+		balls[i] = NewBall(
+			rand.Float64()*float64(width),
+			rand.Float64()*float64(height),
+			rand.Float64()*(70-30)+30,
+			i, balls,
+		)
+	}
+	p5.Stroke(nil)
+	p5.Fill(color.RGBA{R: 255, A: 204})
 }
-
 
 func draw() {
-	// Ruby red background
-	p5.Background(color.RGBA{R: 220, G: 20, B: 60, A: 255})
-
-	// Draw a simplified Ruby &quot;gem&quot;
-	p5.Push()
-	p5.Translate(200, 200)
-	p5.Rotate(angle)
-	p5.Fill(color.RGBA{R: 255, G: 0, B: 0, A: 255})
-	p5.Rect(-75, -75, 150, 150)
-	p5.Pop()
-
-	// Draw floating code snippets
-	p5.Fill(color.White)
-	p5.TextSize(16)
-	p5.Text(&quot;def ruby_method&quot;, 50, 50)
-	p5.Text(&quot;puts &#39;Hello, Ruby!&#39;&quot;, 250, 200)
-	p5.Text(&quot;end&quot;, 100, 350)
-
-	// Draw rotating dots
-	for i := 0; i &lt; 8; i++ {
-		x := 200 + math.Cos(angle+float64(i)*math.Pi/4)*150
-		y := 200 + math.Sin(angle+float64(i)*math.Pi/4)*150
-		p5.Fill(color.RGBA{R: 255, G: 255, B: 255, A: 200})
-		p5.Ellipse(x, y, 20, 20)
+	p5.Background(color.Black)
+	for i := range balls {
+		ball := &amp;balls[i]
+		ball.collide()
+		ball.move()
+		ball.display()
 	}
-
-	angle += 0.02
+	fmt.Println(&quot;drawed&quot;)
 }
 
+type Ball struct {
+	x, y   float64
+	r      float64
+	vx, vy float64
 
-</code></pre> </div> </div> </div> <div class="artwork-info" data-astro-cid-f2ihqk6a> <h1 id="title" data-astro-cid-f2ihqk6a></h1> <p id="description" data-astro-cid-f2ihqk6a></p> </div> </div> <script>(function(){const wasmFilePath = "/sketch/wasm/go_ruby_image.wasm";
+	id    int
+	balls []Ball
+}
+
+func NewBall(x, y, d float64, i int, balls []Ball) Ball {
+	return Ball{
+		x: x, y: y, r: 0.5 * d,
+		id:    i,
+		balls: balls,
+	}
+}
+
+func (ball *Ball) collide() {
+	others := ball.balls[ball.id+1:]
+	for i := range others {
+		o := &amp;others[i]
+		dx := o.x - ball.x
+		dy := o.y - ball.y
+		dist := math.Hypot(dx, dy)
+		minDist := o.r + ball.r
+		if dist &lt; minDist {
+			angle := math.Atan2(dy, dx)
+			sin, cos := math.Sincos(angle)
+			tgtX := ball.x + cos*minDist
+			tgtY := ball.y + sin*minDist
+			ax := (tgtX - o.x) * spring
+			ay := (tgtY - o.y) * spring
+			ball.vx -= ax
+			ball.vy -= ay
+			o.vx += ax
+			o.vy += ay
+		}
+	}
+}
+
+func (ball *Ball) move() {
+	ball.vy += gravity
+	ball.x += ball.vx
+	ball.y += ball.vy
+	switch {
+	case ball.x+ball.r &gt; float64(width):
+		ball.x = float64(width) - ball.r
+		ball.vx *= friction
+
+	case ball.x-ball.r &lt; 0:
+		ball.x = ball.r
+		ball.vx *= friction
+	}
+
+	switch {
+	case ball.y+ball.r &gt; float64(height):
+		ball.y = float64(height) - ball.r
+		ball.vy *= friction
+
+	case ball.y-ball.r &lt; 0:
+		ball.y = ball.r
+		ball.vy *= friction
+	}
+}
+
+func (ball *Ball) display() {
+	p5.Fill(color.RGBA{R: 255, A: 204})
+	p5.Ellipse(ball.x, ball.y, 2*ball.r, 2*ball.r)
+}</code></pre> </div> </div> </div> <div class="artwork-info" data-astro-cid-f2ihqk6a> <h1 id="title" data-astro-cid-f2ihqk6a></h1> <p id="description" data-astro-cid-f2ihqk6a></p> </div> </div> <script>(function(){const wasmFilePath = "/sketch/wasm/go_ruby_image.wasm";
+
 
 	async function initWasm() {
 		if (typeof Go !== 'undefined') {
 			const go = new Go();
 			const result = await WebAssembly.instantiateStreaming(fetch(wasmFilePath), go.importObject);
-			const inst = result.instance;
-			await go.run(inst);
+			await go.run(result.instance);
 		} else {
 			console.error('Go is not defined. Make sure wasm_exec.js is loaded correctly.');
 		}
@@ -95,26 +163,14 @@ const artParamName = "go_ruby_image";
 	art = eval(artParamName);
 
 	
-    const generateButton = document.getElementById('generate-button');
+  const generateButton = document.getElementById('generate-button');
 	document.getElementById('title').innerText = art.title
 	document.getElementById('description').innerText = art.description
 
-    generateButton.addEventListener('click', ()=>{
-		const canvasId = `canvas-detail`;
-		const canvasElement = document.getElementById(canvasId);
-
-		if (canvasElement) {
-			// キャンバスのサイズを設定
-			canvasElement.width = window.innerWidth > 400 ? 400:  window.innerWidth > 400;
-			canvasElement.height = canvasElement.width;
-			
-			// Go側で定義した関数を呼び出し、canvasIdを渡す
-			art.generate(canvasId);
-		} else {
-			console.error('Canvas element not found or generateArt function not available.');
-		}
+  generateButton.addEventListener('click', async ()=>{
+    await art.generate();
 	});
 
-	generateButton.click();
+	//generateButton.click();
   });
 })();</script>  </main>  </body></html>
