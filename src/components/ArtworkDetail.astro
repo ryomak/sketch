@@ -5,7 +5,7 @@ import { readFile } from '../utils/fileReader';
 import { getArtWasmName } from '../data/artworks'
 
 interface Props {
-  artwork: Artwork;
+	artwork: Artwork;
 }
 
 const { artwork } = Astro.props;
@@ -17,22 +17,22 @@ const wasmFilePath = `${BaseUrl}/wasm/${artwork.language}_${artwork.name}.wasm`
 ---
 
 <div class="artwork-detail">
-  <div class="artwork-container">
-    <div class="canvas-container">
-      <canvas class="artwork-canvas" id={`canvas-detail`}></canvas>
-      <button id="generate-button">生成</button>
+
+    <div class="artwork-container">
+		<div>
+        	<div class="canvas-container">
+        	    <main id="canvas-detail"></main>
+        	</div>
+        	<div class="generate-button-container">
+        	    <button id="generate-button">生成</button>
+        	</div>
+        </div>
+        <div>
+            <div class="go-code">
+                <pre><code>{rawCode}</code></pre>
+            </div>
+        </div>
     </div>
-	<div>
-    	<h3>Goコード</h3>
-		<div class="go-code">
-  		    <pre><code>{rawCode}</code></pre>
- 	    </div>
-	</div>
-      </div>
-  <div class="artwork-info">
-    <h1 id="title"></h1>
-    <p id="description"></p>
-  </div>
 </div>
 
 <script define:vars={{ wasmFilePath }}>
@@ -49,178 +49,191 @@ const wasmFilePath = `${BaseUrl}/wasm/${artwork.language}_${artwork.name}.wasm`
 </script>
 
 <script define:vars={{ artwork, BaseUrl, artParamName: getArtWasmName(artwork) }}>
-	
-  document.addEventListener('DOMContentLoaded', async () => {
-	const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
-	// GoのLoadをまつ
-	await sleep(1000)
-	art = eval(artParamName);
+	document.addEventListener('DOMContentLoaded', async () => {
+		const sleep = (ms) => new Promise((res) => setTimeout(res, ms));
 
-	
-  const generateButton = document.getElementById('generate-button');
-	document.getElementById('title').innerText = art.title
-	document.getElementById('description').innerText = art.description
+		// GoのLoadをまつ
+		await sleep(1500)
+		art = eval(artParamName);
 
-  generateButton.addEventListener('click', ()=>{
-		const canvasId = `canvas-detail`;
-		const canvasElement = document.getElementById(canvasId);
+		const generateButton = document.getElementById('generate-button');
 
-		if (canvasElement) {
-			// キャンバスのサイズを設定
-			canvasElement.width = window.innerWidth > 400 ? 400:  window.innerWidth > 400;
-			canvasElement.height = canvasElement.width;
-			
-			// Go側で定義した関数を呼び出し、canvasIdを渡す
+		generateButton.addEventListener('click', ()=>{
+			const canvasId = `#canvas-detail`;
 			art.generate(canvasId);
-		} else {
-			console.error('Canvas element not found or generateArt function not available.');
-		}
+		});
+
+		generateButton.click();
 	});
-
-	generateButton.click();
-  });
 </script>
+
 <style>
-:root {
-  --primary-color: #00ffff;
-  --secondary-color: #ff00ff;
-  --bg-color: #0a0a0a;
-  --text-color: #ffffff;
-}
+    :root {
+        --primary-color: #00cc99;
+        --secondary-color: #ff00ff;
+        --bg-color: #0a0a0a;
+        --text-color: #ffffff;
+    }
 
-body {
-  background-color: var(--bg-color);
-  color: var(--text-color);
-  font-family: 'Roboto', sans-serif;
-}
+    body {
+        background-color: var(--bg-color);
+        color: var(--text-color);
+        font-family: 'Roboto', sans-serif;
+    }
 
-.artwork-detail {
-  max-width: 1200px;
-  width: 95%;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 20px;
-  box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
-  backdrop-filter: blur(10px);
-}
 
-.artwork-container {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
+    .artwork-detail {
+        width: 95%;
+        margin: 12px auto;
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 20px;
+        box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        backdrop-filter: blur(15px);
+    }
 
-.canvas-container {
-  position: relative;
-  width: 100%;
-  padding-bottom: 100%;
-  overflow: hidden;
-  border-radius: 15px;
-  box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
-}
+    .artwork-container {
+        display: flex;
+        flex-direction: column;
+		justify-content: space-around;
+		padding: 24px;
+		box-sizing: border-box;
+        gap: 2rem;
+		overflow: hidden;
+    }
 
-.artwork-canvas {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
+    .canvas-container {
+        position: relative;
+        min-width: fit-content;
+        overflow: hidden;
+        border-radius: 15px;
+        box-shadow: 0 0 40px rgba(0, 255, 255, 0.4);
+        padding: 1rem;
+    }
 
-#generate-button {
-  position: absolute;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  padding: 0.8rem 2rem;
-  background-color: rgba(0, 255, 255, 0.2);
-  color: var(--primary-color);
-  border: 2px solid var(--primary-color);
-  border-radius: 30px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: all 0.3s ease;
-}
+    #canvas-detail {
+        width: 100%;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+        border-radius: 15px;
+        margin: auto;
+    }
 
-#generate-button:hover {
-  background-color: var(--primary-color);
-  color: var(--bg-color);
-  box-shadow: 0 0 20px var(--primary-color);
-}
+    .artwork-canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
 
-.go-code {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
-  padding: 1.5rem;
-  overflow-x: auto;
-  border: 1px solid var(--primary-color);
-}
+    .generate-button-container {
+        text-align: center;
+        margin-top: 1rem;
+    }
 
-.go-code pre {
-  margin: 0;
-}
+    #generate-button {
+        padding: 0.8rem 2rem;
+        background-color: rgba(0, 255, 255, 0.3);
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        border-radius: 30px;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
 
-.go-code code {
-  color: var(--primary-color);
-  font-family: 'Courier New', monospace;
-  font-size: 0.9rem;
-}
+    #generate-button:hover {
+        background-color: var(--primary-color);
+        color: var(--bg-color);
+        box-shadow: 0 0 20px var(--primary-color);
+    }
 
-.artwork-info {
-  text-align: center;
-  padding: 2rem;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 15px;
-  box-shadow: 0 0 20px rgba(255, 0, 255, 0.2);
-}
+    .go-code {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 1.5rem;
+        overflow-x: auto;
+        border: 1px solid var(--primary-color);
+    }
+	.go-code::-webkit-scrollbar {
+        display: none;
+    }
 
-.artwork-info h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  color: var(--primary-color);
-  text-shadow: 0 0 10px var(--primary-color);
-}
+    .go-code pre {
+        margin: 0;
+    }
 
-.artwork-info p {
-  font-size: 1.1rem;
-  color: var(--text-color);
-  max-width: 800px;
-  margin: 0 auto;
-  line-height: 1.6;
-}
+    .go-code code {
+        color: var(--primary-color);
+        font-family: 'Courier New', monospace;
+        font-size: 1rem;
+    }
 
-@media (min-width: 768px) {
-  .artwork-container {
-    flex-direction: row;
-  }
+    .artwork-info {
+        text-align: center;
+        padding: 24px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+		box-sizing: border-box;
+        box-shadow: 0 0 30px rgba(255, 0, 255, 0.3);
+    }
 
-  .canvas-container {
-    flex: 1;
-    padding-bottom: 50%;
-  }
+    .artwork-info h1 {
+        font-size: 30px;
+        color: var(--primary-color);
+        text-shadow: 0 0 15px var(--primary-color);
+    }
 
-  .go-code {
-    flex: 1;
-    max-height: 400px;
-  }
-}
+    .artwork-info p {
+        font-size: 20px;
+        color: var(--text-color);
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.8;
+    }
 
-@keyframes glow {
-  0% {
-    box-shadow: 0 0 20px var(--primary-color);
-  }
-  50% {
-    box-shadow: 0 0 30px var(--secondary-color);
-  }
-  100% {
-    box-shadow: 0 0 20px var(--primary-color);
-  }
-}
+    @media (min-width: 768px) {
+        .artwork-container {
+            flex-direction: row;
+			flex-wrap: wrap;
+        }
 
-.artwork-detail {
-  animation: glow 5s infinite alternate;
-}
+		.artwork-detail {
+			padding: 24px;
+			margin: 0 auto;
+        }
+
+        .canvas-container {
+            flex: 1;
+        }
+
+        .go-code {
+            flex: 1;
+            max-height: 400px;
+            max-width: 500px;
+        }
+    }
+
+    @keyframes glow {
+        0% {
+            box-shadow: 0 0 30px var(--primary-color);
+        }
+        50% {
+            box-shadow: 0 0 40px var(--secondary-color);
+        }
+        100% {
+            box-shadow: 0 0 30px var(--primary-color);
+        }
+    }
+
+    .artwork-detail {
+        animation: glow 5s infinite alternate;
+    }
 </style>

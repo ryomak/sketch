@@ -1,70 +1,86 @@
 package main
 
 import (
-	"image/color"
 	"syscall/js"
 	"math"
+
 	"github.com/ryomak/sketch/art"
-	"github.com/go-p5/p5"
+	"github.com/ryomak/p5go"
 )
 
 func main() {
-	art.Do("go_ruby_image",Art{})
+	art.Do("stylish_ruby", Art{})
 }
 
 var _ art.Interface = Art{}
 type Art struct{}
 
 func (Art) Title() any {
-	return "幾何学"
+	return "Stylish Ruby"
 }
 
 func (Art) Description() any {
-	return "幾何学aaaa"
+	return "An elegant representation of Ruby using geometric animations"
 }
 
 func (Art) Generate(this js.Value, args []js.Value) any {
-	p5.Run(setup, draw)
+	p5go.Execute(args[0].String(),
+		p5go.WithSetup(setup),
+		p5go.WithDraw(draw),
+	)
 	return nil
 }
 
-var (
-	angle float64
-)
+var angle float64
 
-func setup() {
-	p5.Canvas(400, 400)
+func setup(p *p5go.P5Instance) {
+	p.CreateCanvas(400, 400)
+	p.NoStroke()
 }
 
-
-func draw() {
-	// Ruby red background
-	p5.Background(color.RGBA{R: 220, G: 20, B: 60, A: 255})
-
-	// Draw a simplified Ruby "gem"
-	p5.Push()
-	p5.Translate(200, 200)
-	p5.Rotate(angle)
-	p5.Fill(color.RGBA{R: 255, G: 0, B: 0, A: 255})
-	p5.Rect(-75, -75, 150, 150)
-	p5.Pop()
-
-	// Draw floating code snippets
-	p5.Fill(color.White)
-	p5.TextSize(16)
-	p5.Text("def ruby_method", 50, 50)
-	p5.Text("puts 'Hello, Ruby!'", 250, 200)
-	p5.Text("end", 100, 350)
-
-	// Draw rotating dots
-	for i := 0; i < 8; i++ {
-		x := 200 + math.Cos(angle+float64(i)*math.Pi/4)*150
-		y := 200 + math.Sin(angle+float64(i)*math.Pi/4)*150
-		p5.Fill(color.RGBA{R: 255, G: 255, B: 255, A: 200})
-		p5.Ellipse(x, y, 20, 20)
+func draw(p *p5go.P5Instance) {
+	// Gradient-like background
+	for i := 0; i < 400; i++ {
+		r := 220 - float64(i)*0.3
+		g := 20 - float64(i)*0.05
+		b := 60 - float64(i)*0.1
+		if r < 0 { r = 0 }
+		if g < 0 { g = 0 }
+		if b < 0 { b = 0 }
+		p.Fill(r, g, b)
+		p.Rect(0, float64(i), 400, 1)
 	}
 
-	angle += 0.02
+	// Draw rotating Ruby gem (as a multi-faceted shape)
+	p.Push()
+	p.Translate(200, 200)
+	p.Rotate(angle)
+	p.Fill(255, 0, 0)
+	p.BeginShape()
+	for i := 0; i < 6; i++ {
+		x := math.Cos(angle+float64(i)*math.Pi/3) * 100
+		y := math.Sin(angle+float64(i)*math.Pi/3) * 100
+		p.Vertex(x, y)
+	}
+	p.EndShape(p5go.Close)
+	p.Pop()
+
+	// Draw elegant floating code snippets with transparency
+	p.Fill(255, 255, 255, 180)
+	p.TextSize(18)
+	p.TextAlign(p5go.Center, p5go.Center)
+	p.Text("def elegant_ruby", 200, 50)
+	p.Text("puts 'Shine bright like a gem'", 200, 350)
+	p.Text("end", 200, 370)
+
+	// Draw softly glowing, rotating dots around the gem
+	for i := 0; i < 12; i++ {
+		x := 200 + math.Cos(angle+float64(i)*math.Pi/6)*150
+		y := 200 + math.Sin(angle+float64(i)*math.Pi/6)*150
+		p.Fill(255, 255, 255, 150)
+		p.Ellipse(x, y, 15, 15)
+	}
+
+	// Update angle for rotation
+	angle += 0.01
 }
-
-

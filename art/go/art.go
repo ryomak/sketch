@@ -5,11 +5,11 @@ import (
 )
 
 type Interface interface {
-	Title() any 
-	
-	Description() any 
-	
-	Generate(this js.Value, args []js.Value) any 
+	Title() any
+
+	Description() any
+
+	Generate(this js.Value, args []js.Value) any
 }
 
 func Do(name string, i Interface) {

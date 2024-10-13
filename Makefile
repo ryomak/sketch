@@ -6,7 +6,7 @@ GO_DIR = art/go
 WASM_DIR = public/wasm
 
 # デフォルトのアート名
-ART_NAME ?= art1
+ART_NAME ?= ruby_image
 
 # ターゲット
 .PHONY: all clean build

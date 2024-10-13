@@ -2,7 +2,10 @@ module github.com/ryomak/sketch/art
 
 go 1.22.2
 
-require github.com/go-p5/p5 v0.14.0
+require (
+	github.com/go-p5/p5 v0.14.0
+	github.com/ryomak/p5go v0.0.2
+)
 
 require (
 	gioui.org v0.0.0-20210729070555-8cec7e04eb71 // indirect

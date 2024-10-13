@@ -24,3 +24,5 @@ pnpm-debug.log*
 .idea/
 
 .vscode
+
+art/go/vendor
